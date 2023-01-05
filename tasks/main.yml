@@ -6,33 +6,15 @@
     ipv4_addresses: "{{ dns_client_dns_server_ip }}"
   when: dns_client_configure
 
-- name: Join domain
-  ansible.windows.win_domain_membership:
-    dns_domain_name: "{{ domain_dns_name }}"
-    domain_admin_user: "{{ domain_admin_user }}"
-    domain_admin_password: "{{ domain_admin_password }}"
-    domain_ou_path: "{{ domainjoin_ou_path }}"
-    state: domain
-  register: domain_state_ou
-  when:
-    - domain_join_oupath is defined
-    - domain_join_oupath | length > 0
-
-- name: Domain Member
+- name: Join Domain
   win_domain_membership:
-    dns_domain_name: "{{ domain_dns_name }}"
-    domain_admin_user: "{{ domain_admin_user }}"
-    domain_admin_password: "{{ domain_admin_password }}"
+    domain_dnsname: "{{ domainjoin_domain_name }}"
+    domain_admin_user: "{{ domainjoin_user_name}}"
+    domain_admin_password: "{{ domainjoin_user_pw }}"
     state: domain
   register: domain_state
   when:
     - (domain_join_oupath is undefined) or (domain_join_oupath | length == 0)
-
-- name: Reboot when Domain Member requires it
-  win_reboot:
-  when:
-    - (domain_join_oupath is undefined) or (domain_join_oupath | length == 0)    
-    - domain_state.reboot_required
 
 - name: Reboot (OU) when Domain Member requires it
   win_reboot:
@@ -40,3 +22,9 @@
     - domain_join_oupath is defined
     - domain_join_oupath | length > 0
     - domain_state_ou.reboot_required
+
+
+domainjoin_user_pw: 'ThisIsASecurePassword!2022'
+domainjoin_user_name: 'domainjoin@dt.democloud'
+domainjoin_domain_name: 'dt.democloud'
+domainjoin_ou: 'OU=Computer,OU=Objects,DC=dt,DC=democloud'
