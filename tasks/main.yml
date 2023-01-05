@@ -8,7 +8,7 @@
 
 - name: Join Domain
   win_domain_membership:
-    domain_dnsname: "{{ domainjoin_domain_name }}"
+    dns_domain_name: "{{ domainjoin_domain_name }}"
     domain_admin_user: "{{ domainjoin_user_name}}"
     domain_admin_password: "{{ domainjoin_user_pw }}"
     state: domain
@@ -24,7 +24,3 @@
     - domain_state_ou.reboot_required
 
 
-domainjoin_user_pw: 'ThisIsASecurePassword!2022'
-domainjoin_user_name: 'domainjoin@dt.democloud'
-domainjoin_domain_name: 'dt.democloud'
-domainjoin_ou: 'OU=Computer,OU=Objects,DC=dt,DC=democloud'
